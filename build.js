@@ -78,7 +78,8 @@ write('/_redirects', redirects.map(([a, b]) => `${a} ${b} 301\n${a}/ ${b} 301`).
 write('/redirects.json', JSON.stringify(Object.fromEntries(redirects)));
 
 // Comprobaciones: enlaces internos rotos, imágenes sin alt, títulos duplicados. Fallan el build.
-const htmlFiles = walk(DIST).filter((f) => f.endsWith('.html'));
+// Los archivos de verificación de Google (public/root/google*.html) no son páginas del sitio.
+const htmlFiles = walk(DIST).filter((f) => f.endsWith('.html') && !/[\\/]google[0-9a-f]+\.html$/.test(f));
 const exists = (p) => { const clean = decodeURI(p.split(/[?#]/)[0]); const f = join(DIST, clean); return existsSync(f) && (statSync(f).isFile() || existsSync(join(f, 'index.html'))); };
 const problems = []; const titles = new Map();
 for (const f of htmlFiles) {

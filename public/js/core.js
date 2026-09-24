@@ -16,6 +16,8 @@ export function pushRecent(slug) { const r = store.get('u.recent', []).filter((x
 // ---------- Analítica: agregada, sin cookies, sin IP; se desactiva con GPC/DNT ----------
 const optOut = navigator.globalPrivacyControl === true || navigator.doNotTrack === '1';
 export function track(type, data = {}) {
+  // GA4 (solo si el usuario aceptó cookies): mismos eventos que la analítica propia; la página vista la cuenta GA solo.
+  if (window.gtag && type !== 'pageview') window.gtag('event', type, { tool_name: data.tool, search_term: data.q, error_code: data.code });
   if (optOut) return;
   const body = JSON.stringify({ type, path: location.pathname, ...data });
   try { if (!navigator.sendBeacon?.('/api/event', new Blob([body], { type: 'application/json' }))) fetch('/api/event', { method: 'POST', body, keepalive: true, headers: { 'content-type': 'application/json' } }).catch(() => {}); } catch { /* nunca romper la página por la analítica */ }

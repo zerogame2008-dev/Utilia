@@ -28,7 +28,8 @@ Plataforma de herramientas online gratuitas: «necesito hacer algo → entro →
 | API con `Request→Response` estándar (`api/router.js`) | La misma usa `server.js` (Node) y `netlify/functions/api.mjs`. |
 | Persistencia: Supabase/PostgREST vía `fetch` si hay `SUPABASE_*`; si no, JSONL en `DATA_DIR`; si no, log | Sin driver ni ORM. Esquema en `db/schema.sql`. **No Hostinger para BD.** |
 | CSP estricta `'self'` sin inline (solo `'wasm-unsafe-eval'` para pdf.js) | XSS cerrado por defecto. Nada de `style=""`/`<script>` inline; JSON-LD es bloque de datos. |
-| Sin banner de cookies | No hay cookies. localStorage solo para favoritos/recientes (exento). **Si se activan anuncios → CMP obligatorio antes.** |
+| Google Analytics 4 (`G-CNZEVCVLGJ`, la misma propiedad que Aprende Informática — decisión del usuario 2026-09-24; filtrar por hostname en GA) **solo tras consentimiento** (`public/js/consent.js`, patrón de En sus manos) | RGPD/LSSI: sin «Aceptar» no se carga nada de Google. `GA_ID` cambia el ID, `GA_ID=off` lo quita junto con el banner. Convive con la analítica propia (sin cookies). **Si se activan anuncios → CMP completo.** |
+| Verificación de Search Console: `public/root/googlefa9bb534d9a56f77.html` | Se publica en la raíz; el build la excluye de sus comprobaciones de página. |
 | Monedas: GET /api/rates hace de proxy de Frankfurter v2 (/rates?base=EUR), caché 1 h, tipo cruzado en cliente | El navegador no contacta con terceros (CSP 'self', privacidad); una sola petición cubre todos los pares; si el proveedor cae se sirve el último tipo con aviso. Upstream configurable con RATES_API. |
 | Nombre «Utilia» provisional | `SITE_NAME`. El usuario no fijó marca. Si cambia, regenerar imágenes (`npm run images`) no hace falta: el logo no lleva texto. |
 | Datos legales = placeholders visibles `[…]` | No inventar datos de empresa. Se rellenan con `LEGAL_*`, `CONTACT_EMAIL`. |

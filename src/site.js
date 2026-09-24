@@ -17,5 +17,7 @@ export const site = {
   email: env.CONTACT_EMAIL || '[EMAIL DE CONTACTO]',
   // Espacios publicitarios: no se renderizan hasta activarlos (y activar antes un CMP de cookies).
   ads: env.ADS_ENABLED === '1',
+  // Google Analytics 4: solo se carga si el visitante acepta el aviso de cookies. GA_ID=off lo desactiva.
+  gaId: env.GA_ID === 'off' ? '' : env.GA_ID || 'G-CNZEVCVLGJ',
   analytics: env.ANALYTICS !== 'off',
 };

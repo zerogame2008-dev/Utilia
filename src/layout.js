@@ -65,6 +65,7 @@ ${noindex ? raw('<meta name="robots" content="noindex, follow">') : ''}
 ${ld.map(jsonLd)}
 <script type="module" src="${asset('js/core.js')}"></script>
 ${scripts.map((s) => html`<script type="module" src="${asset(s)}"></script>`)}
+${site.gaId ? html`<script type="module" src="${asset('js/consent.js')}"></script>` : ''}
 </head>
 <body class="${bodyClass}">
 <a class="skip" href="#main">Saltar al contenido</a>
@@ -100,8 +101,12 @@ ${body}
     <nav class="foot-col" aria-label="Recursos"><h2>Recursos</h2><a href="/herramientas/">Todas las herramientas</a><a href="/guias/">Guías</a><a href="/contacto/">Contacto</a></nav>
     <nav class="foot-col" aria-label="Legal"><h2>Legal</h2><a href="/aviso-legal/">Aviso legal</a><a href="/privacidad/">Privacidad</a><a href="/cookies/">Cookies</a><a href="/condiciones/">Condiciones de uso</a></nav>
   </div>
-  <div class="wrap foot-bottom"><span>© ${new Date().getFullYear()} ${site.name}</span><span>${icon('shield')} Sin cookies de seguimiento</span></div>
+  <div class="wrap foot-bottom"><span>© ${new Date().getFullYear()} ${site.name}</span>${site.gaId ? html`<button type="button" class="linklike" data-consent-reset>${icon('shield')} Configurar cookies</button>` : html`<span>${icon('shield')} Sin cookies de seguimiento</span>`}</div>
 </footer>
+${site.gaId ? html`<div id="consent" class="consent" role="region" aria-label="Aviso de cookies" data-ga="${site.gaId}" hidden>
+  <p>Usamos cookies de analítica (Google Analytics) <strong>solo si las aceptas</strong>, para saber qué herramientas se usan y mejorarlas. Tus archivos y textos nunca se envían. <a href="/cookies/">Más información</a>.</p>
+  <div class="consent-actions"><button type="button" class="btn btn-sm" data-reject>Rechazar</button><button type="button" class="btn btn-sm btn-primary" data-accept>Aceptar</button></div>
+</div>` : ''}
 </body>
 </html>`.s;
 }
