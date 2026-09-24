@@ -1,0 +1,19 @@
+{
+  "name": "utilia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Plataforma de herramientas online gratuitas: PDF, imágenes, texto, conversores, calculadoras, desarrollo y SEO.",
+  "type": "module",
+  "engines": { "node": ">=22.13" },
+  "scripts": {
+    "build": "node build.js",
+    "start": "node server.js",
+    "dev": "node --watch-path=src --watch-path=public --watch-path=api --watch-path=build.js dev.js",
+    "images": "node scripts/make-images.js",
+    "test": "node --test \"test/*.test.js\""
+  },
+  "devDependencies": {
+    "pdf-lib": "1.17.1",
+    "pdfjs-dist": "6.3.289"
+  }
+}
