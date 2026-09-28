@@ -4,8 +4,9 @@ import './env.js';
 const env = process.env;
 
 export const site = {
-  name: env.SITE_NAME || 'Utilia',
-  url: (env.SITE_URL || 'http://localhost:8141').replace(/\/$/, ''),
+  name: env.SITE_NAME || 'utiliaa',
+  // Netlify inyecta URL (dominio principal) en el build: así el canonical nunca apunta a localhost.
+  url: (env.SITE_URL || env.URL || 'http://localhost:8141').replace(/\/$/, ''),
   lang: 'es',
   locale: 'es_ES',
   tagline: 'Herramientas online gratuitas',

@@ -31,7 +31,8 @@ Plataforma de herramientas online gratuitas: «necesito hacer algo → entro →
 | Google Analytics 4 (`G-CNZEVCVLGJ`, la misma propiedad que Aprende Informática — decisión del usuario 2026-09-24; filtrar por hostname en GA) **solo tras consentimiento** (`public/js/consent.js`, patrón de En sus manos) | RGPD/LSSI: sin «Aceptar» no se carga nada de Google. `GA_ID` cambia el ID, `GA_ID=off` lo quita junto con el banner. Convive con la analítica propia (sin cookies). **Si se activan anuncios → CMP completo.** |
 | Verificación de Search Console: `public/root/googlefa9bb534d9a56f77.html` | Se publica en la raíz; el build la excluye de sus comprobaciones de página. |
 | Monedas: GET /api/rates hace de proxy de Frankfurter v2 (/rates?base=EUR), caché 1 h, tipo cruzado en cliente | El navegador no contacta con terceros (CSP 'self', privacidad); una sola petición cubre todos los pares; si el proveedor cae se sirve el último tipo con aviso. Upstream configurable con RATES_API. |
-| Nombre «Utilia» provisional | `SITE_NAME`. El usuario no fijó marca. Si cambia, regenerar imágenes (`npm run images`) no hace falta: el logo no lleva texto. |
+| Marca **utiliaa** (fijada 2026-09-28), web https://utiliaa.netlify.app | Nombre por defecto en `src/site.js`. La URL del sitio sale de `SITE_URL` o, en Netlify, de la variable `URL` que Netlify inyecta en el build (antes el canonical apuntaba a localhost). |
+| Creatividades Google Ads en `ads/` (1200×628, 1200×1200, logo 1200×1200) + `public/root/og.png` y `logo.png`: `node scripts/make-ads.js` (Windows + Edge headless) | Mismo símbolo e índigo que la web; texto real renderizado, sin fotos de stock. Regenerar si cambia el número de herramientas («82»). |
 | Datos legales = placeholders visibles `[…]` | No inventar datos de empresa. Se rellenan con `LEGAL_*`, `CONTACT_EMAIL`. |
 
 ## Añadir una herramienta

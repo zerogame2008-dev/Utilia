@@ -70,7 +70,7 @@ export function home() {
     title: `${site.name}: herramientas online gratis para PDF, imágenes y más`, description: site.description, path: '/', body, bodyClass: 'home',
     ld: [
       { '@context': 'https://schema.org', '@type': 'WebSite', name: site.name, url: abs('/'), inLanguage: 'es', potentialAction: { '@type': 'SearchAction', target: { '@type': 'EntryPoint', urlTemplate: abs('/herramientas/?q={search_term_string}') }, 'query-input': 'required name=search_term_string' } },
-      { '@context': 'https://schema.org', '@type': 'Organization', name: site.name, url: abs('/'), logo: abs('/icon-512.png') },
+      { '@context': 'https://schema.org', '@type': 'Organization', name: site.name, url: abs('/'), logo: abs('/logo.png') },
     ],
   });
 }
@@ -260,7 +260,7 @@ export function article(a) {
   const body = html`<div class="wrap page">${breadcrumbs(crumbs)}
   <article class="article prose"><header><h1>${a.title}</h1><p class="lead">${a.description}</p><p class="meta">Actualizado el <time datetime="${a.date}">${new Date(a.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' })}</time></p></header>${a.blocks.map(block)}</article>
   <section class="section"><h2>Herramientas de esta guía</h2>${grid(rel, { showCat: true })}</section></div>`;
-  return layout({ title: a.title, description: a.description, path: url.article(a), body, ogType: 'article', ld: [breadcrumbLd(crumbs), { '@context': 'https://schema.org', '@type': 'Article', headline: a.title, description: a.description, datePublished: a.date, dateModified: a.date, inLanguage: 'es', mainEntityOfPage: abs(url.article(a)), author: { '@type': 'Organization', name: site.name, url: abs('/') }, publisher: { '@type': 'Organization', name: site.name, logo: { '@type': 'ImageObject', url: abs('/icon-512.png') } }, image: abs('/og.png') }] });
+  return layout({ title: a.title, description: a.description, path: url.article(a), body, ogType: 'article', ld: [breadcrumbLd(crumbs), { '@context': 'https://schema.org', '@type': 'Article', headline: a.title, description: a.description, datePublished: a.date, dateModified: a.date, inLanguage: 'es', mainEntityOfPage: abs(url.article(a)), author: { '@type': 'Organization', name: site.name, url: abs('/') }, publisher: { '@type': 'Organization', name: site.name, logo: { '@type': 'ImageObject', url: abs('/logo.png') } }, image: abs('/og.png') }] });
 }
 
 // ---------- Legal, contacto, 404 ----------
