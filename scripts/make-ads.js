@@ -2,7 +2,7 @@
 // de la web: símbolo de 4 módulos, índigo #4f46e5/#7c7cff, tipografía del sistema. Renderiza con Edge headless.
 // Uso: node scripts/make-ads.js   (Windows, requiere Microsoft Edge)
 import { writeFileSync, mkdirSync, existsSync, statSync, copyFileSync } from 'node:fs';
-import { execFileSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { icons } from '../src/icons.js';
 
@@ -58,9 +58,58 @@ const pages = {
 </main>`, 'body{background:#f7f8fa}.grid{display:none}')],
 };
 
+// ---------- Creatividades con capturas reales de la web ----------
+// Build temporal sin aviso de cookies (GA_ID=off) servido en :8150; capturas de escritorio y de móvil a 2x.
+const PORT = 8150, SHOTS = root('ads/_html/shots');
+mkdirSync(SHOTS, { recursive: true });
+execFileSync(process.execPath, [root('build.js')], { stdio: 'ignore', env: { ...process.env, GA_ID: 'off', SITE_NAME: 'utiliaa' } });
+const server = spawn(process.execPath, [root('server.js')], { env: { ...process.env, PORT: String(PORT), GA_ID: 'off', ANALYTICS: 'off' }, stdio: 'ignore' });
+await new Promise((r) => setTimeout(r, 1500));
+const shot = (name, path, w, h, dpr = 1) => execFileSync(EDGE, ['--headless=new', '--disable-gpu', '--hide-scrollbars', `--force-device-scale-factor=${dpr}`, '--virtual-time-budget=6000', `--window-size=${w},${h}`, `--screenshot=${SHOTS}/${name}.png`, `http://localhost:${PORT}${path}`], { stdio: 'ignore' });
+try {
+  shot('home', '/', 1280, 800);
+  shot('pdf', '/herramientas/pdf/unir-pdf/', 1280, 800);
+  shot('moneda', '/herramientas/conversores/conversor-moneda/', 1280, 900);
+  shot('home-movil', '/', 500, 1082, 2); // Edge headless no baja de ~500 px de ancho: sigue siendo el diseño móvil
+  shot('moneda-movil', '/herramientas/conversores/conversor-moneda/', 500, 1082, 2);
+} finally { server.kill(); }
+execFileSync(process.execPath, [root('build.js')], { stdio: 'ignore' }); // deja dist/ como estaba
+
+const src = (n) => `file:///${SHOTS.replace(/\\/g, '/')}/${n}.png`;
+const browser = (n, w, crop = 0) => `<div style="width:${w}px;border-radius:18px;overflow:hidden;background:#fff;border:1px solid #d3d7df;box-shadow:0 40px 80px -30px rgba(16,24,40,.35)">
+  <div style="height:44px;display:flex;align-items:center;gap:8px;padding:0 16px;background:#eef0f4;border-bottom:1px solid #e3e6ec"><i style="width:12px;height:12px;border-radius:50%;background:#f87171"></i><i style="width:12px;height:12px;border-radius:50%;background:#fbbf24"></i><i style="width:12px;height:12px;border-radius:50%;background:#34d399"></i>
+  <span style="margin-left:14px;flex:1;height:26px;border-radius:8px;background:#fff;display:flex;align-items:center;padding:0 12px;font-size:14px;color:#4a5263">utiliaa.netlify.app</span></div>
+  <img src="${src(n)}" style="display:block;width:100%;margin-top:-${crop}px"></div>`;
+const phone = (n, h) => `<div style="height:${h}px;aspect-ratio:500/1082;border-radius:${h * 0.075}px;background:#0f1219;padding:${h * 0.018}px;box-shadow:0 40px 80px -30px rgba(16,24,40,.45)"><img src="${src(n)}" style="display:block;width:100%;height:100%;object-fit:cover;object-position:top;border-radius:${h * 0.06}px"></div>`;
+const brand = (s) => `<div class="brand" style="font-size:${s}px">${mark(s * 1.3)}<span>utiliaa</span></div>`;
+const title = (s, html) => `<h1 style="font-size:${s}px">${html}</h1>`;
+const sub = (s, t) => `<p style="margin-top:${s * 0.9}px;font-size:${s}px;font-weight:500;color:#4a5263;letter-spacing:-.01em">${t}</p>`;
+const shotPages = {
+  // Escritorio: la home tal cual.
+  'utiliaa-web-home-1200x628': [1200, 628, base(1200, 628, `
+<main style="position:absolute;left:72px;top:0;bottom:0;width:430px;display:flex;flex-direction:column;justify-content:center">${brand(34)}<div style="height:34px"></div>${title(58, 'Todo lo que necesitas, <em>en el navegador</em>')}${sub(22, 'Sin instalar nada · Sin registro · Gratis')}</main>
+<div style="position:absolute;left:560px;top:74px;transform:rotate(-2deg)">${browser('home', 700)}</div>`)],
+  // PDF: la herramienta más buscada, con su promesa real (se procesa en el dispositivo).
+  'utiliaa-web-pdf-1200x628': [1200, 628, base(1200, 628, `
+<main style="position:absolute;left:72px;top:0;bottom:0;width:440px;display:flex;flex-direction:column;justify-content:center">${brand(34)}<div style="height:34px"></div>${title(60, 'Une, divide y comprime <em>PDF</em> gratis')}${sub(21, 'Tus archivos no salen de tu dispositivo')}</main>
+<div style="position:absolute;left:560px;top:74px">${browser('pdf', 700)}</div>`)],
+  // Cuadrado: móvil con la home.
+  'utiliaa-web-movil-1200x1200': [1200, 1200, base(1200, 1200, `
+<main style="position:absolute;left:96px;top:0;bottom:0;width:560px;display:flex;flex-direction:column;justify-content:center">${brand(48)}<div style="height:56px"></div>${title(72, '82 herramientas<br>online <em>gratis</em>')}${sub(32, 'También desde el móvil')}</main>
+<div style="position:absolute;right:96px;top:120px">${phone('home-movil', 960)}</div>`)],
+  // Cuadrado: el conversor de monedas con un resultado real.
+  'utiliaa-web-monedas-1200x1200': [1200, 1200, base(1200, 1200, `
+<main style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:96px">${brand(46)}<div style="height:44px"></div>${title(84, 'Convierte monedas <em>al instante</em>')}${sub(30, 'Euros, dólares, pesos y 40 monedas más')}</main>
+<div style="position:absolute;left:100px;top:450px">${browser('moneda', 1000, 250)}</div>`)],
+  // Vertical 4:5 (960×1200).
+  'utiliaa-web-vertical-960x1200': [960, 1200, base(960, 1200, `
+<main style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;text-align:center;padding-top:84px">${brand(42)}<div style="height:36px"></div>${title(76, '82 herramientas<br>online <em>gratis</em>')}${sub(26, 'PDF · Imágenes · Calculadoras · Conversores')}</main>
+<div style="position:absolute;left:50%;top:520px;transform:translateX(-50%)">${phone('moneda-movil', 820)}</div>`)],
+};
+
 // Además: og.png de la web (1200×630, mismo diseño que el anuncio horizontal) y logo.png (schema.org).
 const [, , hz] = pages['utiliaa-horizontal-1200x628'];
-const jobs = [...Object.entries(pages).map(([name, [w, h, html]]) => [`ads/${name}.png`, w, h, html]), ['public/root/og.png', 1200, 630, hz.replace(/height:628px/g, 'height:630px')]];
+const jobs = [...Object.entries({ ...pages, ...shotPages }).map(([name, [w, h, html]]) => [`ads/${name}.png`, w, h, html]), ['public/root/og.png', 1200, 630, hz.replace(/height:628px/g, 'height:630px')]];
 for (const [path, w, h, html] of jobs) {
   const file = `${TMP}/${path.replace(/\W/g, '_')}.html`; writeFileSync(file, html);
   const out = root(path);
